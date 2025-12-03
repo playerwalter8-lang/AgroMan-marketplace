@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgroMan - Marketplace Agrícola</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .btn-primary { @apply bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition; }
+    .btn-secondary { @apply bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition; }
+    .card { @apply bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition; }
+    .input-field { @apply border border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-green-500; }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+<!-- HEADER / NAVBAR -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="text-2xl font-bold text-green-600">🌾 AgroMan</div>
+    <div class="hidden md:flex space-x-6">
+      <a href="index.html" class="hover:text-green-600">Início</a>
+      <a href="catalog.html" class="hover:text-green-600">Catálogo</a>
+      <a href="consultas.html" class="hover:text-green-600">Consultas</a>
+      <a href="dashboard.html" class="hover:text-green-600">Dashboard</a>
+    </div>
+    <div class="flex space-x-4">
+      <button class="btn-secondary" onclick="openModal('loginModal')">Login</button>
+      <button class="btn-primary" onclick="openModal('registerModal')">Registrar</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HOMEPAGE HERO -->
+<section class="bg-gradient-to-r from-green-500 to-blue-500 text-white py-20">
+  <div class="max-w-4xl mx-auto text-center px-4">
+    <h1 class="text-5xl font-bold mb-6">Bem-vindo ao AgroMan</h1>
+    <p class="text-xl mb-8">Conectando produtores agrícolas com consumidores finais. Produtos frescos, direto do campo.</p>
+    <div class="flex gap-4 justify-center flex-wrap">
+      <a href="catalog.html" class="bg-white text-green-600 px-8 py-3 rounded-lg font-bold hover:bg-gray-100">Explorar Produtos</a>
+      <button onclick="openModal('registerModal')" class="bg-green-700 hover:bg-green-800 px-8 py-3 rounded-lg font-bold">Começar Agora</button>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES CARDS -->
+<section class="py-16 max-w-6xl mx-auto px-4">
+  <h2 class="text-4xl font-bold mb-12 text-center">Por que escolher AgroMan?</h2>
+  <div class="grid md:grid-cols-3 gap-8">
+    <div class="card">
+      <div class="text-4xl mb-4">🚚</div>
+      <h3 class="text-xl font-bold mb-2">Entrega Rápida</h3>
+      <p class="text-gray-600">Produtos frescos entregues rapidamente direto dos produtores.</p>
+    </div>
+    <div class="card">
+      <div class="text-4xl mb-4">👨‍🌾</div>
+      <h3 class="text-xl font-bold mb-2">Direto do Produtor</h3>
+      <p class="text-gray-600">Compre diretamente de produtores locais e apoie a agricultura local.</p>
+    </div>
+    <div class="card">
+      <div class="text-4xl mb-4">💚</div>
+      <h3 class="text-xl font-bold mb-2">Produtos Naturais</h3>
+      <p class="text-gray-600">Produtos orgânicos e naturais com qualidade garantida.</p>
+    </div>
+  </div>
+</section>
+
+<!-- POPULAR PRODUCTS PREVIEW -->
+<section class="bg-gray-100 py-16">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-8">Produtos Populares</h2>
+    <div class="grid md:grid-cols-4 gap-6" id="popularProducts">
+      <!-- Dinamicamente carregado -->
+    </div>
+  </div>
+</section>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-8 max-w-md w-full">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold">Login</h2>
+      <button onclick="closeModal('loginModal')" class="text-gray-500 hover:text-gray-700">✕</button>
+    </div>
+    <form onsubmit="handleLogin(event)">
+      <input type="email" placeholder="Email" class="input-field mb-4" required>
+      <input type="password" placeholder="Senha" class="input-field mb-6" required>
+      <button type="submit" class="btn-primary w-full mb-4">Entrar</button>
+      <p class="text-center text-gray-600">Não tem conta? <a href="#" onclick="toggleModals()" class="text-green-600 font-bold">Registrar</a></p>
+    </form>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div id="registerModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-8 max-w-md w-full">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold">Registrar</h2>
+      <button onclick="closeModal('registerModal')" class="text-gray-500 hover:text-gray-700">✕</button>
+    </div>
+    <form onsubmit="handleRegister(event)">
+      <input type="text" placeholder="Nome completo" class="input-field mb-3" required>
+      <input type="email" placeholder="Email" class="input-field mb-3" required>
+      <input type="password" placeholder="Senha" class="input-field mb-3" required>
+      <select class="input-field mb-3" required>
+        <option value="">Selecione seu tipo</option>
+        <option value="producer">Produtor Agrícola</option>
+        <option value="vendor">Vendedor</option>
+        <option value="consumer">Consumidor</option>
+      </select>
+      <input type="tel" placeholder="Telefone (opcional)" class="input-field mb-6">
+      <button type="submit" class="btn-primary w-full mb-4">Registrar</button>
+      <p class="text-center text-gray-600">Já tem conta? <a href="#" onclick="toggleModals()" class="text-green-600 font-bold">Login</a></p>
+    </form>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="bg-gray-900 text-white py-12 mt-16">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="grid md:grid-cols-4 gap-8 mb-8">
+      <div>
+        <h3 class="font-bold text-lg mb-4">AgroMan</h3>
+        <p class="text-gray-400">Conectando produtores e consumidores.</p>
+      </div>
+      <div>
+        <h4 class="font-bold mb-4">Navegação</h4>
+        <ul class="text-gray-400 space-y-2">
+          <li><a href="#" class="hover:text-white">Início</a></li>
+          <li><a href="catalog.html" class="hover:text-white">Catálogo</a></li>
+          <li><a href="dashboard.html" class="hover:text-white">Dashboard</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold mb-4">Suporte</h4>
+        <ul class="text-gray-400 space-y-2">
+          <li><a href="#" class="hover:text-white">Ajuda</a></li>
+          <li><a href="#" class="hover:text-white">Contato</a></li>
+          <li><a href="#" class="hover:text-white">FAQs</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold mb-4">Integrações</h4>
+        <ul class="text-gray-400 space-y-2">
+          <li><span class="text-xs">[Placeholder] USSD</span></li>
+          <li><span class="text-xs">[Placeholder] M-Pesa</span></li>
+          <li><span class="text-xs">[Placeholder] Logística</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
+      <p>&copy; 2025 AgroMan. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+  function toggleModals() {
+    closeModal('loginModal');
+    openModal('registerModal');
+  }
+  
+  async function handleLogin(e) {
+    e.preventDefault();
+    const form = e.target;
+    const email = form.querySelector('input[type="email"]').value.trim();
+    const password = form.querySelector('input[type="password"]').value.trim();
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Falha no login');
+      }
+      const data = await res.json();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      closeModal('loginModal');
+      alert('Login realizado com sucesso');
+      window.location.href = '/dashboard.html';
+    } catch (err) {
+      console.error('Login error:', err);
+      alert(err.message || 'Erro ao realizar login');
+    }
+  }
+
+  async function handleRegister(e) {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.querySelector('input[type="text"]').value.trim();
+    const email = form.querySelector('input[type="email"]').value.trim();
+    const password = form.querySelector('input[type="password"]').value.trim();
+    const select = form.querySelector('select');
+    const user_type = select.value;
+    const phone = form.querySelector('input[type="tel"]').value.trim();
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, user_type, phone: phone || null })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Falha no registro');
+      }
+      const data = await res.json();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      closeModal('registerModal');
+      alert('Registro realizado com sucesso');
+      window.location.href = '/dashboard.html';
+    } catch (err) {
+      console.error('Register error:', err);
+      alert(err.message || 'Erro ao realizar registro');
+    }
+  }
+  
+  // Carregar produtos populares
+  fetch('/api/products?limit=4')
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('popularProducts');
+      data.forEach(p => {
+        container.innerHTML += `
+          <div class="card">
+            <div class="bg-gray-300 h-48 rounded mb-4"></div>
+            <h3 class="font-bold mb-2">${p.name}</h3>
+            <p class="text-gray-600 text-sm mb-3">${p.category}</p>
+            <p class="text-green-600 font-bold mb-4">MT ${p.price.toFixed(2)}</p>
+            <button class="btn-primary w-full text-sm">Ver Detalhes</button>
+          </div>
+        `;
+      });
+    })
+    .catch(e => console.error('Erro ao carregar produtos:', e));
+</script>
+
+</body>
+</html>

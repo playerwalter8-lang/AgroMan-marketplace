@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - AgroMan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<!-- HEADER -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <a href="index.html" class="text-2xl font-bold text-green-600">🌾 AgroMan</a>
+    <div class="hidden md:flex space-x-6">
+      <a href="index.html" class="hover:text-green-600">Início</a>
+      <a href="catalog.html" class="hover:text-green-600">Catálogo</a>
+      <a href="consultas.html" class="hover:text-green-600">Consultas</a>
+      <a href="dashboard.html" class="text-green-600 font-bold">Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<div class="flex h-screen">
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-white shadow-lg p-6">
+    <h2 class="font-bold text-lg mb-6">Menu</h2>
+    <ul class="space-y-4">
+      <li><a href="#overview" onclick="showSection('overview')" class="block px-4 py-2 rounded hover:bg-green-100 hover:text-green-700 cursor-pointer">📊 Visão Geral</a></li>
+      <li><a href="#products" onclick="showSection('products')" class="block px-4 py-2 rounded hover:bg-green-100 hover:text-green-700 cursor-pointer">📦 Meus Produtos</a></li>
+      <li><a href="#sales" onclick="showSection('sales')" class="block px-4 py-2 rounded hover:bg-green-100 hover:text-green-700 cursor-pointer">💰 Vendas</a></li>
+      <li><a href="#orders" onclick="showSection('orders')" class="block px-4 py-2 rounded hover:bg-green-100 hover:text-green-700 cursor-pointer">📋 Pedidos</a></li>
+      <li><a href="#settings" onclick="showSection('settings')" class="block px-4 py-2 rounded hover:bg-green-100 hover:text-green-700 cursor-pointer">⚙️ Configurações</a></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 overflow-auto p-8">
+    <!-- OVERVIEW SECTION -->
+    <section id="overview" class="section">
+      <h1 class="text-4xl font-bold mb-8">Dashboard</h1>
+      
+      <!-- METRICS CARDS -->
+      <div class="grid md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-gray-500 text-sm">Produtores Ativos</div>
+          <div id="producersCount" class="text-3xl font-bold text-green-600 mt-2">-</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-gray-500 text-sm">Vendedores Ativos</div>
+          <div id="vendorsCount" class="text-3xl font-bold text-blue-600 mt-2">-</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-gray-500 text-sm">Vendas Totais</div>
+          <div id="salesCount" class="text-3xl font-bold text-purple-600 mt-2">-</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-gray-500 text-sm">Receita Total</div>
+          <div id="revenueCount" class="text-3xl font-bold text-orange-600 mt-2">-</div>
+        </div>
+      </div>
+
+      <!-- CHARTS / POPULAR PRODUCTS -->
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-bold mb-4">Produtos Populares</h2>
+          <div id="popularProducts" class="space-y-3">
+            <p class="text-gray-500">Carregando...</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-bold mb-4">Vendas por Categoria</h2>
+          <div id="categorySales" class="space-y-3">
+            <p class="text-gray-500">Carregando...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS SECTION -->
+    <section id="products" class="section hidden">
+      <h1 class="text-3xl font-bold mb-6">Meus Produtos</h1>
+        <button id="addProductBtn" onclick="openAddProductModal()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold mb-6">
+          + Adicionar Produto
+        </button>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-100 border-b">
+            <tr>
+              <th class="px-6 py-3 text-left">Produto</th>
+              <th class="px-6 py-3 text-left">Categoria</th>
+              <th class="px-6 py-3 text-right">Preço</th>
+              <th class="px-6 py-3 text-right">Estoque</th>
+              <th class="px-6 py-3 text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="productsTable">
+            <tr><td colspan="5" class="px-6 py-4 text-gray-500">Nenhum produto</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SALES SECTION -->
+    <section id="sales" class="section hidden">
+      <h1 class="text-3xl font-bold mb-6">Histórico de Vendas</h1>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-100 border-b">
+            <tr>
+              <th class="px-6 py-3 text-left">ID Pedido</th>
+              <th class="px-6 py-3 text-left">Comprador</th>
+              <th class="px-6 py-3 text-right">Valor</th>
+              <th class="px-6 py-3 text-left">Status</th>
+              <th class="px-6 py-3 text-left">Data</th>
+            </tr>
+          </thead>
+          <tbody id="salesTable">
+            <tr><td colspan="5" class="px-6 py-4 text-gray-500">Nenhuma venda</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ORDERS SECTION -->
+    <section id="orders" class="section hidden">
+      <h1 class="text-3xl font-bold mb-6">Meus Pedidos</h1>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-100 border-b">
+            <tr>
+              <th class="px-6 py-3 text-left">ID Pedido</th>
+              <th class="px-6 py-3 text-left">Vendedor</th>
+              <th class="px-6 py-3 text-right">Valor</th>
+              <th class="px-6 py-3 text-left">Status</th>
+              <th class="px-6 py-3 text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTable">
+            <tr><td colspan="5" class="px-6 py-4 text-gray-500">Nenhum pedido</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SETTINGS SECTION -->
+    <section id="settings" class="section hidden">
+      <h1 class="text-3xl font-bold mb-6">Configurações</h1>
+      <div class="bg-white rounded-lg shadow-md p-6 max-w-2xl">
+        <form onsubmit="saveSettings(event)">
+          <div class="mb-6">
+            <label class="block font-bold mb-2">Nome Completo</label>
+            <input type="text" id="fullName" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
+          </div>
+          <div class="mb-6">
+            <label class="block font-bold mb-2">Email</label>
+            <input type="email" id="email" class="border border-gray-300 rounded-lg px-4 py-2 w-full" disabled>
+          </div>
+          <div class="mb-6">
+            <label class="block font-bold mb-2">Telefone</label>
+            <input type="tel" id="phone" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
+          </div>
+          <div class="mb-6">
+            <label class="block font-bold mb-2">Localização</label>
+            <input type="text" id="location" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
+          </div>
+          <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold">
+            Salvar Alterações
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ADD PRODUCT MODAL -->
+<div id="addProductModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-8 max-w-md w-full">
+    <h2 class="text-2xl font-bold mb-6">Novo Produto</h2>
+    <form onsubmit="addProduct(event)">
+      <input id="productName" type="text" placeholder="Nome do produto" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
+      <input id="productDescription" type="text" placeholder="Descrição" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
+      <select id="productCategory" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
+        <option value="">Selecione a Categoria</option>
+        <option value="Vegetais">Vegetais</option>
+        <option value="Frutas">Frutas</option>
+        <option value="Grãos">Grãos</option>
+        <option value="Naturais">Naturais</option>
+      </select>
+      <input id="productPrice" type="number" step="0.01" placeholder="Preço (MT)" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
+      <input id="productQuantity" type="number" placeholder="Quantidade em Estoque" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-6" required>
+      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold w-full mb-2">
+        Adicionar
+      </button>
+      <button type="button" onclick="closeModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-bold w-full">
+        Cancelar
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(el => el.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    if (id === 'products') {
+      loadMyProducts();
+    }
+  }
+
+  function openAddProductModal() {
+    document.getElementById('addProductModal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('addProductModal').classList.add('hidden');
+  }
+
+  async function addProduct(e) {
+    e.preventDefault();
+    try {
+      const name = document.getElementById('productName').value.trim();
+      const description = document.getElementById('productDescription').value.trim();
+      const category = document.getElementById('productCategory').value;
+      const price = parseFloat(document.getElementById('productPrice').value);
+      const quantity = parseInt(document.getElementById('productQuantity').value);
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Por favor, faça login para adicionar produtos');
+        return;
+      }
+
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name, description, category, price, quantity })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Erro ao adicionar produto');
+      }
+      const result = await response.json();
+      showToast(result.message || 'Produto adicionado');
+      closeModal();
+      // Refresh my products table if open
+      if (!document.getElementById('products').classList.contains('hidden')) {
+        await loadMyProducts();
+      }
+    } catch (err) {
+      console.error('Erro ao adicionar produto:', err);
+      alert(err.message || 'Erro ao adicionar produto');
+    }
+  }
+
+  function saveSettings(e) {
+    e.preventDefault();
+    alert('Alterações salvas (em desenvolvimento)');
+  }
+
+  // Simple toast for user feedback
+  function showToast(message, duration = 3000) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.cssText = 'position: fixed; bottom: 24px; right: 24px; background: #10b981; color: white; padding: 12px 18px; border-radius: 8px; z-index: 9999;';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), duration);
+  }
+
+  // Load logged-in user's products and display in products table
+  async function loadMyProducts() {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (!userStr) {
+        document.getElementById('productsTable').innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-gray-500">Faça login para ver seus produtos.</td></tr>';
+        return;
+      }
+      const user = JSON.parse(userStr);
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/products', {
+        method: 'GET',
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : ''
+        }
+      });
+      const products = await response.json();
+      const myProducts = products.filter(p => p.user_id === user.id || p.user_id === user.userId);
+      const tbody = document.getElementById('productsTable');
+      if (!myProducts || myProducts.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-gray-500">Nenhum produto</td></tr>';
+        return;
+      }
+      tbody.innerHTML = myProducts.map(p => `
+        <tr>
+          <td class="px-6 py-4">${p.name}</td>
+          <td class="px-6 py-4">${p.category}</td>
+          <td class="px-6 py-4 text-right">MT ${parseFloat(p.price).toFixed(2)}</td>
+          <td class="px-6 py-4 text-right">${p.quantity}</td>
+          <td class="px-6 py-4 text-center">
+            <button class="bg-yellow-400 rounded px-3 py-1 mr-2">Editar</button>
+            <button class="bg-red-500 text-white rounded px-3 py-1">Remover</button>
+          </td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      console.error('Erro ao carregar produtos do vendedor:', err);
+    }
+  }
+
+  // Load metrics
+  async function loadMetrics() {
+    try {
+      const response = await fetch('/api/dashboard/metrics');
+      const data = await response.json();
+      document.getElementById('producersCount').textContent = data.active_producers || 0;
+      document.getElementById('vendorsCount').textContent = data.active_vendors || 0;
+      document.getElementById('salesCount').textContent = data.total_sales || 0;
+      document.getElementById('revenueCount').textContent = `MT ${(data.total_revenue || 0).toFixed(2)}`;
+
+      // Popular products
+      const popular = document.getElementById('popularProducts');
+      if (data.popular_products && data.popular_products.length > 0) {
+        popular.innerHTML = data.popular_products.map(p => `
+          <div class="flex justify-between">
+            <span>${p.name}</span>
+            <span class="font-bold text-green-600">${p.order_count} vendas</span>
+          </div>
+        `).join('');
+      }
+
+      // Category sales
+      const categories = document.getElementById('categorySales');
+      if (data.category_sales && data.category_sales.length > 0) {
+        categories.innerHTML = data.category_sales.map(c => `
+          <div class="flex justify-between">
+            <span>${c.category || 'Geral'}</span>
+            <span class="font-bold text-blue-600">${c.sales_count} vendas</span>
+          </div>
+        `).join('');
+      }
+    } catch (e) {
+      console.error('Erro ao carregar métricas:', e);
+    }
+  }
+
+  loadMetrics();
+  // Show/hide add product button depending on user type
+  (function initRoleBasedUI(){
+    const userStr = localStorage.getItem('user');
+    const btn = document.getElementById('addProductBtn');
+    if (!userStr) {
+      // hide button if not logged in
+      btn.style.display = 'none';
+    } else {
+      const user = JSON.parse(userStr);
+      if (!['vendor', 'producer'].includes(user.user_type)) {
+        btn.style.display = 'none';
+      }
+    }
+  })();
+</script>
+
+</body>
+</html>

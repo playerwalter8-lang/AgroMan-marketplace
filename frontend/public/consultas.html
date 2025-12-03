@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consultas Inteligentes - AgroMan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+<!-- HEADER -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <a href="index.html" class="text-2xl font-bold text-green-600">🌾 AgroMan</a>
+    <div class="hidden md:flex space-x-6">
+      <a href="index.html" class="hover:text-green-600">Início</a>
+      <a href="catalog.html" class="hover:text-green-600">Catálogo</a>
+      <a href="consultas.html" class="text-green-600 font-bold">Consultas</a>
+      <a href="dashboard.html" class="hover:text-green-600">Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="max-w-4xl mx-auto px-4 py-12">
+  <h1 class="text-4xl font-bold mb-4">Consultas Inteligentes</h1>
+  <p class="text-gray-600 mb-8">Faça perguntas sobre agricultura, cultivo, plantas e cuidados agrícolas. Receba respostas instantâneas.</p>
+
+  <!-- QUICK TOPICS -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <h2 class="text-xl font-bold mb-4">Tópicos Populares</h2>
+    <div class="grid md:grid-cols-2 gap-3">
+      <button onclick="submitQuery('Como cultivar tomates?')" class="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-3 rounded text-left font-semibold">
+        🍅 Como cultivar tomates?
+      </button>
+      <button onclick="submitQuery('Qual é a melhor época para plantar?')" class="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-3 rounded text-left font-semibold">
+        📅 Qual é a melhor época para plantar?
+      </button>
+      <button onclick="submitQuery('Como controlar pragas naturalmente?')" class="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-3 rounded text-left font-semibold">
+        🐛 Como controlar pragas naturalmente?
+      </button>
+      <button onclick="submitQuery('Qual o melhor tipo de solo?')" class="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-3 rounded text-left font-semibold">
+        🌱 Qual o melhor tipo de solo?
+      </button>
+      <button onclick="submitQuery('Como regar as plantas?')" class="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-3 rounded text-left font-semibold">
+        💧 Como regar as plantas?
+      </button>
+      <button onclick="submitQuery('Qual o melhor fertilizante?')" class="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-3 rounded text-left font-semibold">
+        🥗 Qual o melhor fertilizante?
+      </button>
+    </div>
+  </div>
+
+  <!-- QUERY FORM -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <h2 class="text-xl font-bold mb-4">Sua Pergunta</h2>
+    <div class="flex gap-2">
+      <input type="text" id="queryInput" placeholder="Digite sua pergunta sobre agricultura..." 
+             class="border border-gray-300 rounded-lg px-4 py-3 flex-1 focus:outline-none focus:ring-2 focus:ring-green-500"
+             onkeypress="if(event.key==='Enter') submitQueryFromInput()">
+      <button onclick="submitQueryFromInput()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-bold">
+        Enviar
+      </button>
+    </div>
+  </div>
+
+  <!-- RESPONSES HISTORY -->
+  <h2 class="text-2xl font-bold mb-6">Histórico de Consultas</h2>
+  <div id="responsesContainer" class="space-y-4">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <p class="text-gray-500">Nenhuma consulta realizada ainda.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  let responses = [];
+
+  function submitQueryFromInput() {
+    const query = document.getElementById('queryInput').value.trim();
+    if (!query) return;
+    submitQuery(query);
+    document.getElementById('queryInput').value = '';
+  }
+
+  function submitQuery(queryText) {
+    // Simulating backend call - in production, would POST to /api/consultas/query
+    const response = generateResponse(queryText);
+    responses.unshift({
+      query: queryText,
+      response: response,
+      timestamp: new Date().toLocaleTimeString('pt-BR')
+    });
+    displayResponses();
+  }
+
+  function generateResponse(query) {
+    const knowledgeBase = {
+      'tomate': 'Tomates precisam de sol pleno (6-8 horas), rega regular e solo bem drenado. Cultive em primavera/verão.',
+      'alface': 'Alface prefere clima fresco, meia-sombra em clima quente, e solo úmido. Colha em 45-60 dias.',
+      'mel': 'O mel é produzido por abelhas a partir do néctar das flores. Tem propriedades antibacterianas e energéticas.',
+      'pragas': 'Use controle biológico, neem oil ou sabão inseticida para pragas comuns. Inspecione regularmente.',
+      'solo': 'Teste o pH do solo (6.0-7.5 ideal). Adicione compostagem para fertilidade. Rotação de culturas é importante.',
+      'irrigação': 'Água profundamente mas menos frequentemente. Melhor regar de manhã. Evite molhar as folhas.',
+      'fertilizante': 'Use fertilizante balanceado ou orgânico. Siga instruções de dosagem. Evite excesso de nitrogênio.',
+      'colheita': 'Colha produtos maduros. Tomates vermelhos, alface tenra, frutas doces. Colha cedo para quantidade contínua.',
+      'época': 'A melhor época depende da cultura. Primavera/verão para maioria. Pesquise sua região.',
+      'água': 'Água profundamente mas menos frequentemente. Melhor regar de manhã. Evite molhar as folhas.'
+    };
+
+    const lowerQuery = query.toLowerCase();
+    for (const [keyword, answer] of Object.entries(knowledgeBase)) {
+      if (lowerQuery.includes(keyword)) return answer;
+    }
+
+    const defaults = [
+      'A agricultura sustentável requer planejamento e boas práticas. Consulte um agrônomo local para orientação personalizada.',
+      'Para melhores resultados, combine técnicas tradicionais com inovação. Pesquise variedades adequadas ao seu clima.',
+      'A qualidade do solo é essencial. Faça análise periódica e mantenha a matéria orgânica em bom nível.'
+    ];
+    return defaults[Math.floor(Math.random() * defaults.length)];
+  }
+
+  function displayResponses() {
+    const container = document.getElementById('responsesContainer');
+    container.innerHTML = responses.map((r, idx) => `
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-start mb-4">
+          <h3 class="font-bold text-lg">${r.query}</h3>
+          <span class="text-gray-500 text-sm">${r.timestamp}</span>
+        </div>
+        <div class="bg-green-50 border-l-4 border-green-600 p-4 rounded">
+          <p class="text-gray-700">${r.response}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  displayResponses();
+</script>
+
+</body>
+</html>

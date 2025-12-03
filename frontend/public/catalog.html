@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo - AgroMan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+<!-- HEADER -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <a href="index.html" class="text-2xl font-bold text-green-600">🌾 AgroMan</a>
+    <div class="hidden md:flex space-x-6">
+      <a href="index.html" class="hover:text-green-600">Início</a>
+      <a href="catalog.html" class="text-green-600 font-bold">Catálogo</a>
+      <a href="consultas.html" class="hover:text-green-600">Consultas</a>
+      <a href="dashboard.html" class="hover:text-green-600">Dashboard</a>
+    </div>
+    <div class="flex items-center space-x-4">
+      <button class="text-2xl" onclick="toggleCart()">🛒 <span id="cartCount">0</span></button>
+      <a href="profile.html" class="text-2xl">👤</a>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <h1 class="text-4xl font-bold mb-8">Catálogo de Produtos</h1>
+
+  <!-- FILTERS & SEARCH -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <div class="grid md:grid-cols-3 gap-4">
+      <input type="text" id="searchInput" placeholder="🔍 Pesquisar produtos..." 
+             class="border border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+             onkeyup="filterProducts()">
+      <select id="categoryFilter" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onchange="filterProducts()">
+        <option value="">Todas as Categorias</option>
+        <option value="Vegetais">Vegetais</option>
+        <option value="Frutas">Frutas</option>
+        <option value="Grãos">Grãos</option>
+        <option value="Naturais">Naturais</option>
+        <option value="Geral">Geral</option>
+      </select>
+      <select id="sortFilter" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onchange="filterProducts()">
+        <option value="name">Ordenar por Nome</option>
+        <option value="price-asc">Menor Preço</option>
+        <option value="price-desc">Maior Preço</option>
+        <option value="newest">Mais Recente</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- PRODUCTS GRID -->
+  <div class="grid md:grid-cols-4 gap-6" id="productsGrid">
+    <div class="col-span-full text-center py-12">
+      <p class="text-gray-500">Carregando produtos...</p>
+    </div>
+  </div>
+</div>
+
+<!-- SHOPPING CART SIDEBAR -->
+<div id="cartSidebar" class="hidden fixed right-0 top-0 h-full w-80 bg-white shadow-lg z-40">
+  <div class="p-6 border-b flex justify-between items-center">
+    <h2 class="text-2xl font-bold">Carrinho</h2>
+    <button onclick="toggleCart()" class="text-2xl">✕</button>
+  </div>
+  <div id="cartItems" class="p-6 overflow-y-auto" style="max-height: calc(100vh - 200px);">
+    <p class="text-gray-500">Carrinho vazio</p>
+  </div>
+  <div class="absolute bottom-0 w-full border-t p-6 bg-gray-50">
+    <div class="flex justify-between mb-4 text-xl font-bold">
+      <span>Total:</span>
+      <span id="cartTotal">MT 0.00</span>
+    </div>
+    <button onclick="proceedToCheckout()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg w-full font-bold">
+      Finalizar Compra
+    </button>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-8 max-w-2xl w-full">
+    <div class="flex justify-between items-start mb-4">
+      <h2 id="modalTitle" class="text-3xl font-bold"></h2>
+      <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+    </div>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="bg-gray-300 h-80 rounded"></div>
+      <div>
+        <p id="modalCategory" class="text-gray-600 mb-2"></p>
+        <p id="modalDescription" class="text-gray-700 mb-6"></p>
+        <div class="flex items-baseline gap-4 mb-6">
+          <p id="modalPrice" class="text-3xl font-bold text-green-600"></p>
+          <p id="modalStock" class="text-gray-600"></p>
+        </div>
+        <p id="modalSeller" class="text-gray-600 mb-6"></p>
+        <div class="flex gap-2 mb-6">
+          <input type="number" id="quantityInput" min="1" value="1" class="border border-gray-300 rounded px-3 py-2 w-20">
+          <button onclick="addToCart()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold flex-1">
+            Adicionar ao Carrinho
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let allProducts = [];
+  let cart = [];
+  let currentProductId = null;
+
+  // Load products
+  async function loadProducts() {
+    try {
+      const response = await fetch('/api/products');
+      allProducts = await response.json();
+      displayProducts(allProducts);
+    } catch (e) {
+      console.error('Erro ao carregar produtos:', e);
+    }
+  }
+
+  function displayProducts(products) {
+    const grid = document.getElementById('productsGrid');
+    if (products.length === 0) {
+      grid.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-gray-500">Nenhum produto encontrado</p></div>';
+      return;
+    }
+    grid.innerHTML = products.map(p => `
+      <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer" onclick="showProductModal(${p.id})">
+        <div class="h-48 flex items-center justify-center bg-gray-100">
+          ${getProductIcon(p)}
+        </div>
+        <div class="p-4">
+          <h3 class="font-bold text-lg mb-2">${p.name}</h3>
+          <p class="text-gray-600 text-sm mb-2">${p.category}</p>
+          <p class="text-green-600 font-bold text-xl mb-3">MT ${p.price.toFixed(2)}</p>
+          <button onclick="event.stopPropagation(); showProductModal(${p.id})" class="bg-green-600 hover:bg-green-700 text-white w-full py-2 rounded text-sm font-bold">
+            Ver Detalhes
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Helper to choose an emoji or an image for a product
+  function getProductIcon(p) {
+    // If product has an image URL, use it (assumes it's a valid relative/absolute path)
+    if (p.image) {
+      return `<img src="${p.image}" alt="${p.name}" class="h-40 object-contain">`;
+    }
+
+    // Prefer local image for common categories if available
+    const cat = (p.category || '').toLowerCase();
+    const imageMap = {
+      'vegetais': 'images/plant.svg',
+      'frutas': 'images/fruit.svg',
+      'grãos': 'images/plant.svg',
+      'graos': 'images/plant.svg',
+      'naturais': 'images/plant.svg',
+      'geral': 'images/plant.svg',
+    };
+
+    if (imageMap[cat]) {
+      return `<img src="${imageMap[cat]}" alt="${p.category || 'produto'}" class="h-40 object-contain">`;
+    }
+
+    // Fallback to emoji
+    const emojiMap = {
+      'vegetais': '🥬',
+      'frutas': '🍎',
+      'grãos': '🌾',
+      'graos': '🌾',
+      'naturais': '🌿',
+      'geral': '🪴',
+      'sementes': '🌱'
+    };
+
+    const emoji = emojiMap[cat] || '🌱';
+    return `<div class="text-6xl">${emoji}</div>`;
+  }
+
+  function showProductModal(id) {
+    const product = allProducts.find(p => p.id === id);
+    if (!product) return;
+    currentProductId = id;
+    document.getElementById('modalTitle').textContent = product.name;
+    document.getElementById('modalCategory').textContent = product.category;
+    document.getElementById('modalDescription').textContent = product.description || 'Sem descrição';
+    document.getElementById('modalPrice').textContent = `MT ${product.price.toFixed(2)}`;
+    document.getElementById('modalStock').textContent = `${product.quantity} em estoque`;
+    document.getElementById('modalSeller').textContent = `Vendedor: ${product.seller_name}`;
+    document.getElementById('quantityInput').value = 1;
+    document.getElementById('productModal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('productModal').classList.add('hidden');
+  }
+
+  function addToCart() {
+    const product = allProducts.find(p => p.id === currentProductId);
+    const quantity = parseInt(document.getElementById('quantityInput').value);
+    const cartItem = cart.find(c => c.id === currentProductId);
+    if (cartItem) {
+      cartItem.quantity += quantity;
+    } else {
+      cart.push({...product, quantity});
+    }
+    closeModal();
+    updateCartUI();
+  }
+
+  function updateCartUI() {
+    const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    document.getElementById('cartCount').textContent = cartCount;
+    const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    document.getElementById('cartTotal').textContent = `MT ${cartTotal.toFixed(2)}`;
+    const cartItemsDiv = document.getElementById('cartItems');
+    if (cart.length === 0) {
+      cartItemsDiv.innerHTML = '<p class="text-gray-500">Carrinho vazio</p>';
+    } else {
+      cartItemsDiv.innerHTML = cart.map(item => `
+        <div class="border-b pb-4 mb-4">
+          <div class="flex justify-between items-start mb-2">
+            <h4 class="font-bold">${item.name}</h4>
+            <button onclick="removeFromCart(${item.id})" class="text-red-600">✕</button>
+          </div>
+          <p class="text-gray-600 text-sm mb-2">MT ${item.price.toFixed(2)} x ${item.quantity} = MT ${(item.price * item.quantity).toFixed(2)}</p>
+          <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${item.id}, this.value)" class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+        </div>
+      `).join('');
+    }
+  }
+
+  function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    updateCartUI();
+  }
+
+  function updateQuantity(id, quantity) {
+    const item = cart.find(c => c.id === id);
+    if (item) item.quantity = parseInt(quantity);
+    updateCartUI();
+  }
+
+  function toggleCart() {
+    document.getElementById('cartSidebar').classList.toggle('hidden');
+  }
+
+  function proceedToCheckout() {
+    if (cart.length === 0) {
+      alert('Carrinho vazio!');
+      return;
+    }
+    alert('Redirecionando para checkout (em desenvolvimento)');
+  }
+
+  function filterProducts() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const category = document.getElementById('categoryFilter').value;
+    const sort = document.getElementById('sortFilter').value;
+
+    let filtered = allProducts.filter(p => 
+      (p.name.toLowerCase().includes(search) || p.description.toLowerCase().includes(search)) &&
+      (!category || p.category === category)
+    );
+
+    filtered.sort((a, b) => {
+      if (sort === 'name') return a.name.localeCompare(b.name);
+      if (sort === 'price-asc') return a.price - b.price;
+      if (sort === 'price-desc') return b.price - a.price;
+      return b.id - a.id;
+    });
+
+    displayProducts(filtered);
+  }
+
+  loadProducts();
+</script>
+
+</body>
+</html>
