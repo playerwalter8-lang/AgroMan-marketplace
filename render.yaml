@@ -1,0 +1,24 @@
+# Render manifest for AgroMan
+# Backend: Node web service (Express)
+# Frontend: Static site (frontend/public)
+
+services:
+  - type: web
+    name: agroman-backend
+    env: node
+    plan: free
+    branch: main
+    root: backend
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+
+static_sites:
+  - name: agroman-frontend
+    type: static_site
+    plan: free
+    branch: main
+    root: frontend
+    staticPublishPath: public
+    buildCommand: ""
+    autoDeploy: true
