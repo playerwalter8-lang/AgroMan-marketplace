@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path');
 require('dotenv').config();
 
 const db = require('./db/init');
@@ -18,7 +19,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static frontend files (only used for local dev when serving backend)
-app.use(express.static('../frontend/public'));
+app.use(express.static(path.join(__dirname, '../frontend/public')));
 
 // Routes
 app.use('/api/auth', authRoutes);
