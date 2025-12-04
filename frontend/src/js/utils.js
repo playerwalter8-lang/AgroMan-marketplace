@@ -9,12 +9,8 @@ const API_BASE = (() => {
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     return '/api';
   }
-  // Production (Vercel)
-  if (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('agroman')) {
-    return 'https://agroman-backend.vercel.app/api';
-  }
-  // Fallback to relative path
-  return '/api';
+  // Production (Render backend)
+  return 'https://agroman-backend.onrender.com/api';
 })();
 
 // Make authenticated API call
