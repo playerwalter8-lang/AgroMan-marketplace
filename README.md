@@ -2,13 +2,25 @@
 
 Uma plataforma digital leve e rápida que conecta produtores agrícolas e vendedores ao consumidor final, com sistema inteligente de consultas e funcionalidade básica de marketplace.
 
+## 🌐 Acesso Online (Grátis, Qualquer Lugar)
+
+**Seu app está hospedado na Vercel e acessível de qualquer dispositivo!**
+
+- **Frontend**: https://agroman-frontend.vercel.app/
+- **Backend API**: https://agroman-backend.vercel.app/api/
+- **Acesso**: Abra em qualquer navegador, em qualquer computador/telemóvel
+
+Para fazer deploy você mesmo, veja [DEPLOY_QUICK.md](./DEPLOY_QUICK.md)
+
+---
+
 ## 📋 Requisitos
 
 - Node.js 14.0 ou superior
 - npm ou yarn
 - SQLite3 (incluído no projeto)
 
-## 🚀 Instalação Rápida
+## 🚀 Instalação Rápida (Local)
 
 ### 1. Clonar/Abrir o Projeto
 

@@ -15,8 +15,8 @@
 │  $ npm run seed       (criar banco de dados)                              │
 │  $ npm run dev        (development com auto-reload)                       │
 │                                                                            │
-│  → Frontend: http://localhost:5000/index.html                             │
-│  → API:      http://localhost:5000/api                                    │
+│  → Frontend: http://localhost:5000/                             │
+│  → API:      http://localhost:5000/                                  │
 │                                                                            │
 └────────────────────────────────────────────────────────────────────────────┘
 
@@ -133,7 +133,7 @@
 │     → Delete data/agroman.db e rode npm run seed                         │
 │                                                                            │
 │  ❌ CORS errors                                                            │
-│     → Use http://localhost:5000 (não 127.0.0.1)                         │
+│     → Use http://localhost:5000 (local)                                  │
 │                                                                            │
 └────────────────────────────────────────────────────────────────────────────┘
 

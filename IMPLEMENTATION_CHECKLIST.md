@@ -71,9 +71,9 @@ npm run dev
 
 ### Acessar a Aplicação
 
-- **Frontend**: http://localhost:5000/index.html
-- **API**: http://localhost:5000/api
-- **Health Check**: http://localhost:5000/api/health
+- **Frontend**: https://agro-man-marketplace-project.vercel.app/
+- **API**: https://agro-man-marketplace-project.vercel.app/
+- **Health Check**: https://agro-man-marketplace-project.vercel.app/
 
 ### Usuários de Teste
 

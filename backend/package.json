@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "AgroMan backend API - lightweight marketplace for agricultural producers and vendors",
   "main": "src/index.js",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",

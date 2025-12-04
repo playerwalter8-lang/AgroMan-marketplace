@@ -80,9 +80,9 @@
     <!-- PRODUCTS SECTION -->
     <section id="products" class="section hidden">
       <h1 class="text-3xl font-bold mb-6">Meus Produtos</h1>
-        <button id="addProductBtn" onclick="openAddProductModal()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold mb-6">
-          + Adicionar Produto
-        </button>
+      <button onclick="openAddProductModal()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold mb-6">
+        + Adicionar Produto
+      </button>
       <div class="bg-white rounded-lg shadow-md overflow-hidden">
         <table class="w-full">
           <thead class="bg-gray-100 border-b">
@@ -178,17 +178,17 @@
   <div class="bg-white rounded-lg p-8 max-w-md w-full">
     <h2 class="text-2xl font-bold mb-6">Novo Produto</h2>
     <form onsubmit="addProduct(event)">
-      <input id="productName" type="text" placeholder="Nome do produto" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
-      <input id="productDescription" type="text" placeholder="Descrição" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
-      <select id="productCategory" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
+      <input type="text" placeholder="Nome do produto" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
+      <input type="text" placeholder="Descrição" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
+      <select class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
         <option value="">Selecione a Categoria</option>
         <option value="Vegetais">Vegetais</option>
         <option value="Frutas">Frutas</option>
         <option value="Grãos">Grãos</option>
         <option value="Naturais">Naturais</option>
       </select>
-      <input id="productPrice" type="number" step="0.01" placeholder="Preço (MT)" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
-      <input id="productQuantity" type="number" placeholder="Quantidade em Estoque" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-6" required>
+      <input type="number" step="0.01" placeholder="Preço (MT)" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-3" required>
+      <input type="number" placeholder="Quantidade em Estoque" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-6" required>
       <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold w-full mb-2">
         Adicionar
       </button>
@@ -203,9 +203,6 @@
   function showSection(id) {
     document.querySelectorAll('.section').forEach(el => el.classList.add('hidden'));
     document.getElementById(id).classList.remove('hidden');
-    if (id === 'products') {
-      loadMyProducts();
-    }
   }
 
   function openAddProductModal() {
@@ -216,99 +213,15 @@
     document.getElementById('addProductModal').classList.add('hidden');
   }
 
-  async function addProduct(e) {
+  function addProduct(e) {
     e.preventDefault();
-    try {
-      const name = document.getElementById('productName').value.trim();
-      const description = document.getElementById('productDescription').value.trim();
-      const category = document.getElementById('productCategory').value;
-      const price = parseFloat(document.getElementById('productPrice').value);
-      const quantity = parseInt(document.getElementById('productQuantity').value);
-
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Por favor, faça login para adicionar produtos');
-        return;
-      }
-
-      const response = await fetch('/api/products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ name, description, category, price, quantity })
-      });
-
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || 'Erro ao adicionar produto');
-      }
-      const result = await response.json();
-      showToast(result.message || 'Produto adicionado');
-      closeModal();
-      // Refresh my products table if open
-      if (!document.getElementById('products').classList.contains('hidden')) {
-        await loadMyProducts();
-      }
-    } catch (err) {
-      console.error('Erro ao adicionar produto:', err);
-      alert(err.message || 'Erro ao adicionar produto');
-    }
+    alert('Produto adicionado com sucesso (em desenvolvimento)');
+    closeModal();
   }
 
   function saveSettings(e) {
     e.preventDefault();
     alert('Alterações salvas (em desenvolvimento)');
-  }
-
-  // Simple toast for user feedback
-  function showToast(message, duration = 3000) {
-    const toast = document.createElement('div');
-    toast.textContent = message;
-    toast.style.cssText = 'position: fixed; bottom: 24px; right: 24px; background: #10b981; color: white; padding: 12px 18px; border-radius: 8px; z-index: 9999;';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), duration);
-  }
-
-  // Load logged-in user's products and display in products table
-  async function loadMyProducts() {
-    try {
-      const userStr = localStorage.getItem('user');
-      if (!userStr) {
-        document.getElementById('productsTable').innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-gray-500">Faça login para ver seus produtos.</td></tr>';
-        return;
-      }
-      const user = JSON.parse(userStr);
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/products', {
-        method: 'GET',
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : ''
-        }
-      });
-      const products = await response.json();
-      const myProducts = products.filter(p => p.user_id === user.id || p.user_id === user.userId);
-      const tbody = document.getElementById('productsTable');
-      if (!myProducts || myProducts.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-gray-500">Nenhum produto</td></tr>';
-        return;
-      }
-      tbody.innerHTML = myProducts.map(p => `
-        <tr>
-          <td class="px-6 py-4">${p.name}</td>
-          <td class="px-6 py-4">${p.category}</td>
-          <td class="px-6 py-4 text-right">MT ${parseFloat(p.price).toFixed(2)}</td>
-          <td class="px-6 py-4 text-right">${p.quantity}</td>
-          <td class="px-6 py-4 text-center">
-            <button class="bg-yellow-400 rounded px-3 py-1 mr-2">Editar</button>
-            <button class="bg-red-500 text-white rounded px-3 py-1">Remover</button>
-          </td>
-        </tr>
-      `).join('');
-    } catch (err) {
-      console.error('Erro ao carregar produtos do vendedor:', err);
-    }
   }
 
   // Load metrics
@@ -348,20 +261,6 @@
   }
 
   loadMetrics();
-  // Show/hide add product button depending on user type
-  (function initRoleBasedUI(){
-    const userStr = localStorage.getItem('user');
-    const btn = document.getElementById('addProductBtn');
-    if (!userStr) {
-      // hide button if not logged in
-      btn.style.display = 'none';
-    } else {
-      const user = JSON.parse(userStr);
-      if (!['vendor', 'producer'].includes(user.user_type)) {
-        btn.style.display = 'none';
-      }
-    }
-  })();
 </script>
 
 </body>

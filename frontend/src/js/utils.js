@@ -3,8 +3,19 @@
  * Common helpers for HTML pages
  */
 
-// API base URL
-const API_BASE = '/api';
+// API base URL - auto-detect environment
+const API_BASE = (() => {
+  // Local development
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return '/api';
+  }
+  // Production (Vercel)
+  if (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('agroman')) {
+    return 'https://agroman-backend.vercel.app/api';
+  }
+  // Fallback to relative path
+  return '/api';
+})();
 
 // Make authenticated API call
 async function apiCall(endpoint, method = 'GET', data = null) {

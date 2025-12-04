@@ -271,7 +271,7 @@ npm run seed
 ```
 
 ### Problemas de CORS
-Certifique-se de que está acessando `http://localhost:5000` e não `127.0.0.1:5000`
+Certifique-se de que está acessando `https://agro-man-marketplace-project.vercel.app` (URL de produção Vercel)
 
 ---
 
